@@ -1,11 +1,11 @@
 # Percona XtraDB Cluster (PXC) Demo
 
-Quickly get an [Percona XtraDB Cluster](http://www.percona.com/software/percona-xtradb-cluster) cluster up and running with [Vagrant](http://www.vagrantup.com/) & some shell magic. The base OS is Centos6.4 x86_64.
+Quickly get a [Percona XtraDB Cluster](http://www.percona.com/software/percona-xtradb-cluster) cluster up and running with [Vagrant](http://www.vagrantup.com/) & some shell magic. The base OS is Centos 6.4 x86_64.
 
 ## Get'er'done
 
- 1. Install Vagrant
- 2. Clone the repo
+ 1. Install [Vagrant](http://www.vagrantup.com/)
+ 2. Clone this repo
  3. `vagrant up`
 
 ## Notes/TODOs
