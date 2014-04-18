@@ -49,6 +49,3 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     
 
 end
-
-# If you have `vagrant up`ed the machine and just want to run salt again, super useful:
-# time sudo salt-call state.highstate --local -l debug 2>&1 | awk '{ print strftime("%Y-%m-%d %H:%M:%S"), $0; }'
