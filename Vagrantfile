@@ -12,12 +12,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 #        p2.vm.provider :virtualbox do |vb|
 #            vb.customize ["modifyvm", :id, "--memory", "512"]
 #        end
-#        p2.vm.provision :shell, :path => "./files/install-key.sh"
-#        #p2.vm.provision :salt do |salt|
-#        #    salt.minion_config = "./files/minion"
-#        #    salt.run_highstate = true
-#        #    salt.verbose = true
-#        #end
 #    end
 
     config.vm.define :m1 do |m1|
@@ -28,7 +22,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         m1.vm.provider :virtualbox do |vb|
             vb.customize ["modifyvm", :id, "--memory", "512"]
         end
-        m1.vm.provision :shell, :path => "./files/install-key.sh"
         m1.vm.provision :shell, :path => "./files/m1.sh"
     end
 
@@ -40,7 +33,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         m2.vm.provider :virtualbox do |vb|
             vb.customize ["modifyvm", :id, "--memory", "512"]
         end
-        m2.vm.provision :shell, :path => "./files/install-key.sh"
         m2.vm.provision :shell, :path => "./files/m2.sh"
     end
 
@@ -52,7 +44,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         m3.vm.provider :virtualbox do |vb|
             vb.customize ["modifyvm", :id, "--memory", "512"]
         end
-        m3.vm.provision :shell, :path => "./files/install-key.sh"
         m3.vm.provision :shell, :path => "./files/m3.sh"
     end
     
