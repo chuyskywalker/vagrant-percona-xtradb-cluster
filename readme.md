@@ -10,10 +10,10 @@ Quickly get a [Percona XtraDB Cluster](http://www.percona.com/software/percona-x
 
 ## Notes/TODOs
 
- - Add HAProxy
- - Add some load testing harnesses for fun times
- - CHAOS MONKIES!
- - Totes' not safe for a real production deployment (Vagrant boxes come with a
+ [x] Add HAProxy
+ [ ] Add some load testing harnesses for fun times
+ [ ] CHAOS MONKIES!
+ [ ] Totes' not safe for a real production deployment (Vagrant boxes come with a
    publicly known SSH keypair.)
 
 ## References
