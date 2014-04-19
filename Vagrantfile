@@ -1,18 +1,20 @@
-VAGRANTFILE_API_VERSION = "2"
 
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+Vagrant.configure('2') do |config|
 
-# todo: haproxy
-#    config.vm.define :p2 do |p2|
-#        p2.vm.box     = "centos65-x86_64-20140116"
-#        p2.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.3/centos65-x86_64-20140116.box"
-#        p2.vm.hostname = "p2.local.dev"
-#        p2.vm.network :private_network, ip: "192.168.56.22", virtualbox__intnet: "clusternet"
-#        p2.vm.synced_folder "./synced", "/synced"
-#        p2.vm.provider :virtualbox do |vb|
-#            vb.customize ["modifyvm", :id, "--memory", "512"]
-#        end
-#    end
+    config.vm.define :ha do |ha|
+        ha.vm.box     = "centos65-x86_64-20140116"
+        ha.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.3/centos65-x86_64-20140116.box"
+        ha.vm.hostname = "ha.local.dev"
+        # This will let you hit http://127.0.0.1:8080/haproxy/stats in your browser
+        ha.vm.network "forwarded_port", guest:   80, host: 8080
+        # And this will let you hit 127.0.0.1:3306 with your favorite mysql client -- each time going to a new node
+        ha.vm.network "forwarded_port", guest: 3306, host: 3306
+        ha.vm.network :private_network, ip: "192.168.56.20", virtualbox__intnet: "clusternet"
+        ha.vm.provider :virtualbox do |vb|
+            vb.customize ["modifyvm", :id, "--memory", "512"]
+        end
+        ha.vm.provision :shell, :path => "./files/hap.sh"
+    end
 
     config.vm.define :m1 do |m1|
         m1.vm.box     = "centos65-x86_64-20140116"
@@ -22,7 +24,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         m1.vm.provider :virtualbox do |vb|
             vb.customize ["modifyvm", :id, "--memory", "512"]
         end
-        m1.vm.provision :shell, :path => "./files/m1.sh"
+        m1.vm.provision :shell, :path => "./files/pxc-node.sh", :args => ['1', '192.168.56.31']
     end
 
     config.vm.define :m2 do |m2|
@@ -33,7 +35,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         m2.vm.provider :virtualbox do |vb|
             vb.customize ["modifyvm", :id, "--memory", "512"]
         end
-        m2.vm.provision :shell, :path => "./files/m2.sh"
+        m2.vm.provision :shell, :path => "./files/pxc-node.sh", :args => ['2', '192.168.56.32']
     end
 
     config.vm.define :m3 do |m3|
@@ -44,7 +46,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         m3.vm.provider :virtualbox do |vb|
             vb.customize ["modifyvm", :id, "--memory", "512"]
         end
-        m3.vm.provision :shell, :path => "./files/m3.sh"
+        m3.vm.provision :shell, :path => "./files/pxc-node.sh", :args => ['3', '192.168.56.33']
     end
     
 
