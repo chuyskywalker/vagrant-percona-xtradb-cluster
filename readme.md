@@ -2,7 +2,7 @@
 
 Quickly get a [Percona XtraDB Cluster](http://www.percona.com/software/percona-xtradb-cluster) cluster up and running with [Vagrant](http://www.vagrantup.com/) & some shell magic. The base OS is Centos 6.4 x86_64.
 
-You'll also get an HAProxy node which will round-robin connect you to any of the three nodes.
+You'll also get an HAProxy node which will round-robin connect you to any of the three nodes configured for HA failover. Go ahead, kill -9 a server with a loop running in the background -- you'll have about 2 seconds of potential down time.
 
 ## Get'er'done
 
