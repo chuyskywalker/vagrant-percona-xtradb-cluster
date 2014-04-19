@@ -2,19 +2,25 @@
 
 Quickly get a [Percona XtraDB Cluster](http://www.percona.com/software/percona-xtradb-cluster) cluster up and running with [Vagrant](http://www.vagrantup.com/) & some shell magic. The base OS is Centos 6.4 x86_64.
 
+You'll also get an HAProxy node which will round-robin connect you to any of the three nodes.
+
 ## Get'er'done
 
  1. Install [Vagrant](http://www.vagrantup.com/)
  2. Clone this repo
  3. `vagrant up`
 
+## After Startup
+
+The HAProxy node will come up first and you can watch http://127.0.0.1:8080/haproxy/stats -- it'll be a bit boring right up to the point where m1 comes online and you see it go green in the status board.
+
+Once m2 is up, you can start using your favorite mysql client to connect to 127.0.0.1:3306 with the userpass of `cu` and `cu` to the `clusterup` database. Note how you don't have to wait for m3 to come up, neat :D 
+
 ## Notes/TODOs
 
- [x] Add HAProxy
- [ ] Add some load testing harnesses for fun times
- [ ] CHAOS MONKIES!
- [ ] Totes' not safe for a real production deployment (Vagrant boxes come with a
-   publicly known SSH keypair.)
+ - Add some load testing harnesses for fun times
+ - CHAOS MONKIES!
+ - Totes' not safe for a real production deployment (Vagrant boxes come with a publicly known SSH keypair.)
 
 ## References
 
