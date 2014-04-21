@@ -34,9 +34,16 @@ backend pxc-back
     mode tcp
     balance leastconn
     option httpchk
-    server m1 192.168.56.31:3306 check port 9200 inter 2s rise 3 fall 3
-    server m2 192.168.56.32:3306 check port 9200 inter 2s rise 3 fall 3
-    server m3 192.168.56.33:3306 check port 9200 inter 2s rise 3 fall 3
+    # The config lets you set up 1-9 nodes, so we cover them all here just in case
+    server m1 192.168.56.31:3306 check port 9200 inter 5s rise 3 fall 3
+    server m2 192.168.56.32:3306 check port 9200 inter 5s rise 3 fall 3
+    server m3 192.168.56.33:3306 check port 9200 inter 5s rise 3 fall 3
+    server m4 192.168.56.34:3306 check port 9200 inter 5s rise 3 fall 3
+    server m5 192.168.56.35:3306 check port 9200 inter 5s rise 3 fall 3
+    server m6 192.168.56.36:3306 check port 9200 inter 5s rise 3 fall 3
+    server m7 192.168.56.37:3306 check port 9200 inter 5s rise 3 fall 3
+    server m8 192.168.56.38:3306 check port 9200 inter 5s rise 3 fall 3
+    server m9 192.168.56.39:3306 check port 9200 inter 5s rise 3 fall 3
 
 frontend stats-front
     bind *:80
@@ -54,3 +61,20 @@ backend stats-back
 /etc/init.d/haproxy restart
 
 chkconfig haproxy on
+
+
+# Install newer sysbench
+yum install -y bzr mysql-devel gcc gcc-c++ autoconf automake make libtool
+bzr branch lp:sysbench
+cd sysbench
+./autogen.sh
+./configure --prefix=/usr --mandir=/usr/share/man
+make
+make install
+
+# install the oltp lua test
+mkdir /usr/share/sysbench/tests/db -p
+cp sysbench/tests/db/* /usr/share/sysbench/tests/db
+
+## sysbench --test=/usr/share/sysbench/tests/db/oltp.lua --db-driver=mysql --mysql-engine-trx=yes --mysql-table-engine=innodb --mysql-host=127.0.0.1 --mysql-port=3306 --mysql-user=cu --mysql-password=cu --mysql-db=clusterup --oltp-table-size=10000 prepare
+## sysbench --test=/usr/share/sysbench/tests/db/oltp.lua --db-driver=mysql --mysql-engine-trx=yes --mysql-table-engine=innodb --mysql-host=127.0.0.1 --mysql-port=3306 --mysql-user=cu --mysql-password=cu --mysql-db=clusterup --oltp-table-size=10000 --num-threads=16 run

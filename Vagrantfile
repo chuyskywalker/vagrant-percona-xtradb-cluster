@@ -1,9 +1,13 @@
-
 Vagrant.configure('2') do |config|
 
+    # Use the same centos6.5 box for everyone
+    config.vm.box     = "centos65-x86_64-20140116"
+    config.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.3/centos65-x86_64-20140116.box"
+    
+    # Everyone gets the common install parts
+    config.vm.provision :shell, :path => "./files/common.sh"
+
     config.vm.define :ha do |ha|
-        ha.vm.box     = "centos65-x86_64-20140116"
-        ha.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.3/centos65-x86_64-20140116.box"
         ha.vm.hostname = "ha.local.dev"
         # This will let you hit http://127.0.0.1:8080/haproxy/stats in your browser
         ha.vm.network "forwarded_port", guest:   80, host: 8080
@@ -16,38 +20,27 @@ Vagrant.configure('2') do |config|
         ha.vm.provision :shell, :path => "./files/hap.sh"
     end
 
-    config.vm.define :m1 do |m1|
-        m1.vm.box     = "centos65-x86_64-20140116"
-        m1.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.3/centos65-x86_64-20140116.box"
-        m1.vm.hostname = "m1.local.dev"
-        m1.vm.network :private_network, ip: "192.168.56.31", virtualbox__intnet: "clusternet"
-        m1.vm.provider :virtualbox do |vb|
+    config.vm.define :cc do |cc|
+        cc.vm.hostname = "cc.local.dev"
+        # This will let you hit http://127.0.0.1:9090/clustercontrol in your browser
+        cc.vm.network "forwarded_port", guest:   80, host: 9090
+        cc.vm.network :private_network, ip: "192.168.56.40", virtualbox__intnet: "clusternet"
+        cc.vm.provider :virtualbox do |vb|
             vb.customize ["modifyvm", :id, "--memory", "512"]
         end
-        m1.vm.provision :shell, :path => "./files/pxc-node.sh", :args => ['1', '192.168.56.31']
-    end
-
-    config.vm.define :m2 do |m2|
-        m2.vm.box     = "centos65-x86_64-20140116"
-        m2.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.3/centos65-x86_64-20140116.box"
-        m2.vm.hostname = "m2.local.dev"
-        m2.vm.network :private_network, ip: "192.168.56.32", virtualbox__intnet: "clusternet"
-        m2.vm.provider :virtualbox do |vb|
-            vb.customize ["modifyvm", :id, "--memory", "512"]
-        end
-        m2.vm.provision :shell, :path => "./files/pxc-node.sh", :args => ['2', '192.168.56.32']
-    end
-
-    config.vm.define :m3 do |m3|
-        m3.vm.box     = "centos65-x86_64-20140116"
-        m3.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.3/centos65-x86_64-20140116.box"
-        m3.vm.hostname = "m3.local.dev"
-        m3.vm.network :private_network, ip: "192.168.56.33", virtualbox__intnet: "clusternet"
-        m3.vm.provider :virtualbox do |vb|
-            vb.customize ["modifyvm", :id, "--memory", "512"]
-        end
-        m3.vm.provision :shell, :path => "./files/pxc-node.sh", :args => ['3', '192.168.56.33']
+        cc.vm.provision :shell, :path => "./files/cc.sh"
     end
     
+    # Setup many slaves -- don't setup more than 9 or the IP allocation will break since "192.168.56.310" is not a valid IP :D
+    (1..5).each do |i|
+        config.vm.define "m#{i}" do |pxcnode|
+            pxcnode.vm.hostname = "m#{i}.local.dev"
+            pxcnode.vm.network :private_network, ip: "192.168.56.3#{i}", virtualbox__intnet: "clusternet"
+            pxcnode.vm.provider :virtualbox do |vb|
+                vb.customize ["modifyvm", :id, "--memory", "384"]
+            end
+            pxcnode.vm.provision :shell, :path => "./files/pxc-node.sh", :args => ["#{i}", "192.168.56.3#{i}"]
+        end
+    end
 
 end
